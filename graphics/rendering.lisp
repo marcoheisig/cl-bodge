@@ -2,7 +2,7 @@
 
 
 (defun render (output pipeline &rest input
-               &key index-array
+               &key index-buffer
                  (instance-count 1)
                  vertex-count
                  (vertex-offset 0)
@@ -10,11 +10,11 @@
   (enable-rendering-output output)
   (enable-pipeline pipeline input)
   (let ((mode (pipeline-primitive pipeline)))
-    (if index-array
+    (if index-buffer
         (progn
-          (inject-shader-input index-array)
+          (inject-shader-input index-buffer)
           (%gl:draw-elements-instanced mode
-                                       (or vertex-count (index-array-length index-array))
+                                       (or vertex-count (index-buffer-length index-buffer))
                                        :unsigned-int
                                        (cffi:make-pointer vertex-offset)
                                        instance-count))

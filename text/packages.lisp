@@ -1,7 +1,6 @@
-(cl:defpackage :cl-bodge.text
+(ge.util:define-package :cl-bodge.text
   (:nicknames :ge.text)
-  (:use :cl :cl-bodge.utils :cl-bodge.engine :cl-bodge.graphics
-        :cl-bodge.resources :cl-bodge.library.shading)
+  (:use :cl :cl-bodge.utils :cl-bodge.engine :cl-bodge.graphics :cl-bodge.resources)
   (:export make-glyph
            bake-font
            font-ascender-height
@@ -11,7 +10,6 @@
            measure-string
            make-text
            render-text
-           update-text
            string-of
            width-of
            height-of

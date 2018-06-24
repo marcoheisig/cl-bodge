@@ -77,8 +77,8 @@
   (error "Unimplemented yet"))
 
 
-(defun %build-shading-program (&key vertex fragment)
-  (link-shader-libraries :vertex-shader vertex :fragment-shader fragment))
+(defun %build-shading-program (&key vertex fragment geometry)
+  (link-shader-libraries :vertex-shader vertex :fragment-shader fragment :geometry-shader geometry))
 
 
 (defmacro defpipeline (name-and-opts &body shaders)
@@ -106,10 +106,11 @@
     (ensure-clean-pipeline pipeline)
     (gl:use-program shading-program)
     (let ((*active-shading-program* shading-program))
-      (gl:bind-vertex-array vertex-array-id)
-      (gl:bind-buffer :element-array-buffer 0)
-      (loop for (name value) on input by #'cddr
-            do (multiple-value-bind (parameters exist-p)
-                   (program-input-parameters pipeline name)
-                 (when exist-p
-                   (apply #'inject-shader-input value parameters)))))))
+      (with-texture-units ()
+        (gl:bind-vertex-array vertex-array-id)
+        (gl:bind-buffer :element-array-buffer 0)
+        (loop for (name value) on input by #'cddr
+              do (multiple-value-bind (parameters exist-p)
+                     (program-input-parameters pipeline name)
+                   (when exist-p
+                     (apply #'inject-shader-input value parameters))))))))

@@ -63,6 +63,12 @@
   (setf (shader-library-cache shader-library) nil))
 
 
+(defun clear-registry-cache ()
+  (with-slots (library-table) *shader-registry*
+    (loop for shader-library being the hash-values of library-table
+          do (clear-shader-library-cache shader-library))))
+
+
 (defun remove-from-dependencies (shader-class dependencies)
   (with-slots (dependency-table) *shader-registry*
     (loop for dependency in dependencies do
@@ -142,7 +148,8 @@
 
 (defun link-shader-libraries (&rest libraries &key &allow-other-keys)
   (let ((shaders (loop for (type shader-class) on libraries by #'cddr
-                       append (collect-compiled-libraries shader-class type)))
+                       when shader-class
+                         append (collect-compiled-libraries shader-class type)))
         (program (gl:create-program)))
     (handler-bind ((serious-condition (lambda (c)
                                         (declare (ignore c)) (gl:delete-program program))))
